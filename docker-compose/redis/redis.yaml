@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:6
+    pull_policy: always
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "50m"
+    command: redis-server /data/redis.conf --daemonize no
+    volumes:
+      - /data/redis:/data
+ 
+networks:
+  backend:
