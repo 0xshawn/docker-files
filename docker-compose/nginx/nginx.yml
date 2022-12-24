@@ -1,0 +1,30 @@
+version: "3.7"
+
+x-common: &common
+  pull_policy: always # always, never, missing, build
+  restart: unless-stopped
+  stop_signal: SIGINT
+  stop_grace_period: 1m
+
+x-logging: &logging
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "10"
+      max-size: "100m"
+
+services:
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    ports:
+      - 18545:18545/tcp
+    environment:
+      - NGINX_ENTRYPOINT_QUIET_LOGS=1
+    volumes:
+      - /data/nginx/configs/nginx.conf:/etc/nginx/nginx.conf
+      - /data/nginx/configs/conf.d:/etc/nginx/conf.d
+      - /data/nginx/log:/var/log/nginx
+      - /data/nginx/configs/logrotate:/etc/logrotate.d/nginx
+    <<: *logging
+    <<: *common
